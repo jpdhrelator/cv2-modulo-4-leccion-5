@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Actividad integradora M4 L5 — Mascota Virtual (Tamagotchi). El alumno construye por etapas un objeto con propiedades y métodos que usan this para cambiar su estado, aplicando objetos, notación punto/corchete, métodos, Object.entries, spread y destructuring. Versiona con Git (commit por etapa), sube a GitHub y publica en GitHub Pages. SIN soluciones." />
+<title>🐾 Actividad · M4 L5 · Mi Mascota Virtual</title>
+<style>
+  :root {
+    --bg:#f5f7fb; --paper:#ffffff; --ink:#14223b; --ink-soft:#4a5a76;
+    --brand:#2563eb; --brand-2:#7c3aed; --accent:#0ea5a4; --warn:#b45309;
+    --warn-bg:#fff7ed; --ok:#15803d; --ok-bg:#f0fdf4;
+    --code-bg:#0f172a; --code-ink:#e2e8f0; --code-blue:#7dd3fc; --border:#dbe3ee; --radius:14px;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.7; font-size:18px; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 96px; }
+
+  header.hero { background:linear-gradient(135deg,#db2777,#f59e0b); color:#fff; border-radius:20px; padding:44px 40px; margin-bottom:16px; }
+  header.hero .kicker { text-transform:uppercase; letter-spacing:.2em; font-size:.8rem; opacity:.9; margin:0 0 12px; }
+  header.hero h1 { margin:0 0 12px; font-size:clamp(1.8rem,4.5vw,2.8rem); line-height:1.1; }
+  header.hero p { margin:0; font-size:1.1rem; opacity:.95; max-width:780px; }
+
+  .rules { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:26px 30px; margin-bottom:16px; }
+  .rules h2 { margin:0 0 12px; font-size:1.2rem; }
+  .rules ol { margin:0; padding-left:22px; }
+  .rules li { margin:8px 0; }
+  .rules .progress { margin-top:18px; padding-top:16px; border-top:1px dashed var(--border); font-weight:600; color:var(--brand-2); font-size:1.05rem; }
+
+  .setup { background:linear-gradient(180deg,#ffffff,#fdf2f8); border:1px solid #fbcfe8; border-left:6px solid #db2777; border-radius:var(--radius); padding:28px 32px; margin-bottom:16px; }
+  .setup h2 { margin:0 0 10px; font-size:1.45rem; color:var(--ink); }
+  .setup > p { margin:10px 0; }
+  .setup h3 { margin:28px 0 8px; font-size:1.1rem; color:#db2777; display:flex; align-items:center; gap:10px; }
+  .setup h3 .step { background:#db2777; color:#fff; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+  .setup ol, .setup ul { padding-left:24px; margin:8px 0; }
+  .setup li { margin:7px 0; }
+  .setup pre { background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:16px 18px; margin:10px 0; overflow-x:auto; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.88rem; line-height:1.6; white-space:pre; }
+  .setup pre.tree { color:var(--code-blue); }
+  .setup .opt { background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:4px 18px 14px; margin:12px 0; }
+  .setup .opt h4 { margin:14px 0 6px; font-size:.98rem; color:var(--ink); }
+  .note-box { background:var(--warn-bg); border-left:5px solid var(--warn); border-radius:10px; padding:12px 18px; margin:14px 0; font-size:.92rem; }
+  .note-box::before { content:"⚠️ "; font-weight:700; }
+  .git-box { background:#ecfeff; border-left:5px solid var(--accent); border-radius:10px; padding:12px 18px; margin:14px 0; font-size:.92rem; }
+  .git-box::before { content:"🔧 Git — "; font-weight:700; color:var(--accent); }
+
+  section.reto { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:30px 32px; margin-top:26px; box-shadow:0 1px 3px rgba(20,34,59,.04); transition:border-color .2s ease, box-shadow .2s ease; }
+  section.reto:has(.done input:checked) { border-color:var(--ok); box-shadow:0 0 0 2px rgba(21,128,61,.18); }
+  section.reto h3 { margin:0 0 6px; font-size:1.35rem; color:var(--ink); }
+  section.reto .lead { color:var(--ink-soft); margin:0 0 16px; }
+
+  .badge { display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; margin-left:10px; vertical-align:middle; }
+  .badge.b1{ background:#dcfce7; color:#166534; } .badge.b2{ background:#fef9c3; color:#854d0e; } .badge.b3{ background:#fee2e2; color:#991b1b; } .badge.final{ background:#ede9fe; color:#5b21b6; }
+
+  .mision { background:#eff6ff; border-left:5px solid var(--brand); border-radius:10px; padding:14px 22px 16px; margin:16px 0; }
+  .mision::before { content:"🎯 Tu misión"; display:block; font-weight:700; color:var(--brand); margin-bottom:6px; }
+  .mision ol { margin:6px 0 0; padding-left:22px; } .mision li { margin:6px 0; } .mision p { margin:6px 0; }
+
+  details.hint { background:var(--warn-bg); border:1px solid #fed7aa; border-radius:10px; padding:0 18px; margin:16px 0; }
+  details.hint summary { cursor:pointer; font-weight:700; color:var(--warn); padding:13px 0; list-style:none; }
+  details.hint summary::-webkit-details-marker { display:none; }
+  details.hint summary::before { content:"💡 "; }
+  details.hint[open] summary { border-bottom:1px dashed #fed7aa; }
+  details.hint ul { margin:12px 0 16px; padding-left:22px; } details.hint li { margin:7px 0; }
+
+  code.inline { background:#eef2f7; color:#b91c63; padding:2px 7px; border-radius:6px; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.9em; }
+
+  .lab-head { display:flex; align-items:center; gap:10px; background:#eef2f7; border-bottom:1px solid var(--border); padding:9px 16px; }
+  .lab-head .fname { color:var(--ink-soft); font-size:.82rem; font-weight:600; font-family:"SF Mono",Menlo,monospace; }
+  .lab-head .fname::before { content:"📄 "; }
+  .starter { margin:18px 0; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .starter pre.code { margin:0; background:var(--code-bg); color:var(--code-ink); padding:18px 20px; overflow-x:auto; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.95rem; line-height:1.6; tab-size:2; white-space:pre; }
+
+  .goal { background:#f5f3ff; border-left:5px solid var(--brand-2); border-radius:10px; padding:14px 22px; margin:16px 0; }
+  .goal::before { content:"✅ Deberías ver algo así"; display:block; font-weight:700; color:var(--brand-2); margin-bottom:6px; }
+  .goal pre { margin:6px 0 0; background:#ffffff; border:1px solid #ddd6fe; border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:"SF Mono",Menlo,monospace; font-size:.9rem; color:#4c1d95; line-height:1.5; white-space:pre; }
+  .goal .nota { font-size:.82rem; color:var(--ink-soft); margin:10px 0 0; }
+
+  label.done { display:inline-flex; align-items:center; gap:9px; margin-top:16px; font-weight:600; color:var(--ink-soft); cursor:pointer; user-select:none; }
+  label.done input { width:18px; height:18px; accent-color:var(--ok); cursor:pointer; }
+  section.reto:has(.done input:checked) label.done { color:var(--ok); }
+  label.done .txt-on { display:none; }
+  section.reto:has(.done input:checked) label.done .txt-off { display:none; }
+  section.reto:has(.done input:checked) label.done .txt-on { display:inline; }
+
+  .commit-tip { margin:14px 0 0; font-size:.86rem; color:var(--ink-soft); background:#f0fdfa; border:1px dashed #99f6e4; border-radius:8px; padding:10px 14px; }
+  .commit-tip code { background:#ccfbf1; color:#0f766e; padding:2px 7px; border-radius:6px; font-family:"SF Mono",Menlo,monospace; font-size:.88em; }
+
+  .part-title { display:flex; align-items:center; gap:14px; margin:56px 0 8px; padding-bottom:14px; border-bottom:3px solid var(--brand-2); flex-wrap:wrap; }
+  .part-title .pill { background:var(--brand-2); color:#fff; font-size:.8rem; letter-spacing:.15em; text-transform:uppercase; padding:6px 14px; border-radius:999px; }
+  .part-title h2 { margin:0; font-size:1.6rem; }
+
+  section.reto.boss { border:2px solid var(--brand-2); background:linear-gradient(180deg,#ffffff,#faf5ff); }
+  section.reto.boss h3 { color:var(--brand-2); }
+
+  .checklist { background:var(--ok-bg); border:1px solid #bbf7d0; border-left:6px solid var(--ok); border-radius:var(--radius); padding:26px 30px; margin-top:34px; }
+  .checklist h2 { margin:0 0 6px; font-size:1.35rem; color:var(--ink); }
+  .checklist > p { margin:0 0 14px; color:var(--ink-soft); font-size:.95rem; }
+  .checklist label { display:flex; align-items:flex-start; gap:11px; margin:10px 0; cursor:pointer; }
+  .checklist input { width:18px; height:18px; margin-top:4px; accent-color:var(--ok); cursor:pointer; flex-shrink:0; }
+
+  footer { text-align:center; color:var(--ink-soft); font-size:.9rem; margin-top:64px; }
+  a.back-top { color:var(--brand); text-decoration:none; font-size:.85rem; }
+
+  @media (max-width:640px){ body{font-size:16px;} .wrap{padding:20px 14px 64px;} section.reto{padding:22px 18px;} }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">Módulo 4 · Lección 05 · Actividad integradora</p>
+    <h1>🐾 Mi Mascota Virtual</h1>
+    <p>Construye tu propio Tamagotchi: una <strong>mascota</strong> que es un objeto con propiedades (hambre, felicidad, energía) y <strong>métodos</strong> que cambian su estado usando <code style="color:#fff">this</code>. La armas <strong>por etapas</strong> en <code style="color:#fff">mascota.js</code>, aplicando TODO lo de objetos: notación punto/corchete, métodos, <code style="color:#fff">Object.entries</code>, spread y destructuring. Versionas con <strong>Git (un commit por etapa)</strong>, subes a <strong>GitHub</strong> y publicas en <strong>GitHub Pages</strong>. NO es el sistema que hicimos en clase: te toca aplicar las herramientas a algo nuevo.</p>
+  </header>
+
+  <section class="rules">
+    <h2>📜 Cómo se juega</h2>
+    <ol>
+      <li>Primero <strong>arma tu proyecto</strong> (sección de abajo): carpeta, <code class="inline">mascota.js</code>, <code class="inline">index.html</code> y repositorio Git.</li>
+      <li>Resuelve las etapas <strong>en orden</strong>: cada una agrega una propiedad o método a tu objeto <code class="inline">mascota</code>.</li>
+      <li>La misión dice QUÉ lograr, no CÓMO. Si te atascas, abre la <strong>💡 pista</strong>.</li>
+      <li>Prueba en tu computador (Node o Live Server + consola F12) y compara con la <strong>salida esperada</strong>.</li>
+      <li>Cuando una etapa funcione: <strong>haz un commit</strong>. Una etapa = un commit.</li>
+      <li>Marca <strong>"Etapa cumplida"</strong> y mira subir tu progreso.</li>
+    </ol>
+    <p class="progress">🏅 Progreso: <span id="contador">0</span> / 7 etapas cumplidas</p>
+  </section>
+
+  <div class="setup">
+    <h2>🚀 Arma y entrega tu proyecto</h2>
+    <p>Crea tu proyecto, versiónalo con Git, súbelo a <strong>GitHub</strong> y publícalo en <strong>GitHub Pages</strong>.</p>
+
+    <h3><span class="step">1</span> Crea tu carpeta</h3>
+<pre class="tree">mi-mascota/
+├── index.html     ← carga tu mascota.js
+├── README.md      ← describe tu proyecto
+└── mascota.js     ← AQUÍ construyes todo, etapa por etapa</pre>
+
+    <h3><span class="step">2</span> Copia este index.html base</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es-CL"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Mi Mascota Virtual&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Mi Mascota Virtual — abre la consola (F12)&lt;/h1&gt;
+  &lt;script src="mascota.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <div class="note-box">Para probar: abre <code class="inline">index.html</code> con <strong>Live Server</strong> y mira la consola (F12). Si tienes <strong>Node</strong>, corre <code class="inline">node mascota.js</code> en la terminal.</div>
+
+    <h3><span class="step">3</span> Inicializa Git y commitea por etapa</h3>
+<pre>git init
+git add .
+git commit -m "chore: estructura inicial del proyecto"</pre>
+    <div class="git-box">cada etapa que funcione = un commit con mensaje claro (<code class="inline">feat: ...</code>). NO dejes todo para un commit gigante al final. Revisa con <code class="inline">git log --oneline</code>.</div>
+
+    <h3><span class="step">4</span> Sube a GitHub y publica en Pages</h3>
+    <div class="opt">
+      <h4>Subir (terminal, recomendado)</h4>
+<pre>git branch -M main
+git remote add origin https://github.com/TU-USUARIO/mi-mascota.git
+git push -u origin main</pre>
+      <h4>Publicar</h4>
+      <p>En tu repo: <strong>Settings → Pages</strong>, elige rama <code class="inline">main</code> y carpeta <code class="inline">/ (root)</code>. Abre el enlace y revisa la consola (F12).</p>
+    </div>
+    <div class="note-box">Entregas <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</div>
+  </div>
+
+  <!-- ===================== PARTE 1 ===================== -->
+  <div class="part-title"><span class="pill">Parte 1 · La mascota</span><h2>Crea el objeto y su primer método</h2></div>
+
+  <!-- E1 -->
+  <section class="reto" id="e1">
+    <h3>Etapa 1 · Nace tu mascota <span class="badge b1">Nivel 1</span></h3>
+    <p class="lead">Todo parte por el objeto. Copia la mascota base y aprende a leer sus propiedades de las dos formas.</p>
+    <div class="mision">
+      <ol>
+        <li>Copia el objeto <code class="inline">mascota</code> al inicio de tu <code class="inline">mascota.js</code>. Tiene nombre, tipo y tres stats (hambre, felicidad, energía) del 0 al 100.</li>
+        <li>Muestra el <strong>nombre</strong> usando <strong>notación punto</strong> y el <strong>tipo</strong> usando <strong>notación corchete</strong>.</li>
+        <li>(Puedes cambiarle el nombre y el tipo a tu gusto.)</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Punto: <code class="inline">mascota.nombre</code>. Corchete: <code class="inline">mascota["tipo"]</code>.</li>
+        <li>Ambas dan lo mismo; el corchete sirve cuando la clave es texto o variable.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — punto de partida</span></div>
+<pre class="code">const mascota = {
+  nombre: "Pelusa",
+  tipo: "gato",
+  hambre: 50,      // 0 = lleno, 100 = muerto de hambre
+  felicidad: 50,   // 0 = triste, 100 = feliz
+  energia: 50,     // 0 = agotado, 100 = lleno de energía
+
+  // En las próximas etapas agregarás métodos AQUÍ dentro.
+};
+
+// Muestra el nombre (punto) y el tipo (corchete)
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Nombre: Pelusa
+Tipo: gato</pre>
+      <p class="nota">El nombre y tipo los eliges tú; lo importante es usar punto para uno y corchete para el otro.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: etapa 1 - objeto mascota"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E2 -->
+  <section class="reto" id="e2">
+    <h3>Etapa 2 · El método describir() y this <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Tu primer método: una función DENTRO del objeto que lee sus propias propiedades con <code class="inline">this</code>.</p>
+    <div class="mision">
+      <ol>
+        <li>Agrega un método <code class="inline">describir()</code> dentro del objeto que <strong>devuelva</strong> un texto como: <em>"Pelusa es un gato."</em></li>
+        <li>Dentro del método, usa <code class="inline">this.nombre</code> y <code class="inline">this.tipo</code> (NO escribas los valores a mano).</li>
+        <li>Invócalo y muestra el resultado.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Sintaxis de método: <code class="inline">describir() { return ... }</code> dentro de las llaves del objeto.</li>
+        <li><code class="inline">this</code> es la propia mascota: <code class="inline">this.nombre</code> lee su nombre.</li>
+        <li>Para invocarlo: <code class="inline">mascota.describir()</code>. ¡NO uses arrow function para el método! (con arrow, <code class="inline">this</code> no sería la mascota).</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Dentro de las llaves del objeto, después de los stats:
+//   describir() {
+//     return `${this.nombre} ...`;
+//   },
+
+
+// Fuera del objeto: invoca y muestra mascota.describir()
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Pelusa es un gato.</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: etapa 2 - metodo describir con this"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== PARTE 2 ===================== -->
+  <div class="part-title"><span class="pill">Parte 2 · Cuídala</span><h2>Métodos que cambian el estado</h2></div>
+
+  <!-- E3 -->
+  <section class="reto" id="e3">
+    <h3>Etapa 3 · alimentar() (cambiar el estado) <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Lo nuevo y potente: un método que MODIFICA una propiedad del propio objeto con <code class="inline">this</code>.</p>
+    <div class="mision">
+      <ol>
+        <li>Agrega <code class="inline">alimentar()</code>: debe <strong>bajar</strong> el hambre en 20 (comer quita hambre).</li>
+        <li>El hambre nunca debe bajar de 0: usa <code class="inline">Math.max</code> para ponerle un piso.</li>
+        <li>Que imprima cómo quedó. Prueba alimentando <strong>dos veces</strong> (desde hambre 50).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Modificar el estado: <code class="inline">this.hambre = this.hambre - 20</code>.</li>
+        <li>Para que no baje de 0: <code class="inline">this.hambre = Math.max(0, this.hambre - 20)</code> (¿recuerdas Math?).</li>
+        <li>Dentro del método puedes hacer <code class="inline">console.log</code> mostrando <code class="inline">this.hambre</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — agrega DENTRO del objeto</span></div>
+<pre class="code">//   alimentar() {
+//     this.hambre = Math.max(0, this.hambre - 20);
+//     console.log(...);   // muestra el nuevo valor
+//   },
+
+
+// Fuera: mascota.alimentar();  dos veces
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Pelusa comió 🍖 — Hambre: 30
+Pelusa comió 🍖 — Hambre: 10</pre>
+      <p class="nota">Partiendo de hambre 50: baja a 30 y luego a 10. El texto lo eliges tú.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: etapa 3 - metodo alimentar"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E4 -->
+  <section class="reto" id="e4">
+    <h3>Etapa 4 · jugar() y dormir() <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Dos métodos más, que cambian varias propiedades a la vez. Con tope arriba (no pasar de 100).</p>
+    <div class="mision">
+      <ol>
+        <li><code class="inline">jugar()</code>: <strong>sube</strong> la felicidad en 20 (tope 100) y <strong>baja</strong> la energía en 15 (piso 0). Jugar cansa.</li>
+        <li><code class="inline">dormir()</code>: <strong>sube</strong> la energía en 30 (tope 100).</li>
+        <li>Prueba: juega una vez y luego duerme una vez (desde 50/50).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para no pasar de 100: <code class="inline">Math.min(100, this.felicidad + 20)</code>.</li>
+        <li>Para no bajar de 0: <code class="inline">Math.max(0, this.energia - 15)</code>.</li>
+        <li>Un método puede cambiar VARIAS propiedades: <code class="inline">jugar()</code> toca felicidad y energía.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — agrega DENTRO del objeto</span></div>
+<pre class="code">//   jugar() {
+//     this.felicidad = Math.min(100, this.felicidad + 20);
+//     this.energia  = Math.max(0, this.energia - 15);
+//     console.log(...);
+//   },
+//   dormir() {
+//     this.energia = Math.min(100, this.energia + 30);
+//     console.log(...);
+//   },
+
+
+// Fuera: mascota.jugar();  mascota.dormir();
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Pelusa jugó 🎾 — Felicidad: 70, Energía: 35
+Pelusa durmió 😴 — Energía: 65</pre>
+      <p class="nota">Desde 50/50: jugar deja felicidad 70 y energía 35; dormir sube la energía a 65.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: etapa 4 - metodos jugar y dormir"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== PARTE 3 ===================== -->
+  <div class="part-title"><span class="pill">Parte 3 · Inspecciona</span><h2>Recorrer y copiar el objeto</h2></div>
+
+  <!-- E5 -->
+  <section class="reto" id="e5">
+    <h3>Etapa 5 · Ver todos los stats (Object.entries) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Mostrar el estado completo recorriendo el objeto, pero solo los stats numéricos (sin los métodos).</p>
+    <div class="mision">
+      <ol>
+        <li>Agrega un método <code class="inline">verEstado()</code> que recorra la mascota e imprima <strong>solo las propiedades numéricas</strong> (hambre, felicidad, energía), no el nombre, el tipo ni los métodos.</li>
+        <li>Usa <code class="inline">Object.entries</code> y <code class="inline">filter</code> para quedarte solo con los valores que son números.</li>
+        <li>Pruébalo.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">Object.entries(this)</code> te da pares <code class="inline">[clave, valor]</code> de TODA la mascota (incluidos métodos).</li>
+        <li>Filtra por tipo: <code class="inline">.filter(([clave, valor]) =&gt; typeof valor === "number")</code>.</li>
+        <li>Luego recorre con <code class="inline">.forEach(([clave, valor]) =&gt; console.log(clave + ": " + valor))</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — agrega DENTRO del objeto</span></div>
+<pre class="code">//   verEstado() {
+//     Object.entries(this)
+//       .filter(([clave, valor]) => typeof valor === "number")
+//       .forEach(([clave, valor]) => console.log(...));
+//   },
+
+
+// Fuera: mascota.verEstado();
+</pre>
+    </div>
+    <div class="goal">
+      <pre>hambre: 50
+felicidad: 50
+energia: 50</pre>
+      <p class="nota">Estos son los valores iniciales. Si ya ejecutaste alimentar/jugar/dormir antes, los números reflejarán esos cambios (el estado se acumula).</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: etapa 5 - verEstado con Object.entries"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E6 -->
+  <section class="reto" id="e6">
+    <h3>Etapa 6 · Clon VIP (spread) y destructuring <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Crear una COPIA de la mascota con algo extra, sin tocar la original. Y sacar datos con destructuring.</p>
+    <div class="mision">
+      <ol>
+        <li>Crea <code class="inline">mascotaVIP</code> copiando tu mascota con <strong>spread</strong> <code class="inline">{ ...mascota }</code>, pero agrégale un <code class="inline">accesorio</code> y ponle la <code class="inline">felicidad</code> en 100.</li>
+        <li>Muestra la felicidad de la VIP y comprueba que la <strong>mascota original NO cambió</strong>.</li>
+        <li>Con <strong>destructuring</strong>, saca <code class="inline">nombre</code> y <code class="inline">tipo</code> de la mascota a dos variables y muéstralas.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Spread con cambios: <code class="inline">const mascotaVIP = { ...mascota, accesorio: "corona", felicidad: 100 }</code>.</li>
+        <li>El spread crea un objeto NUEVO: cambiar la VIP no afecta a la original.</li>
+        <li>Destructuring: <code class="inline">const { nombre, tipo } = mascota;</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — agrega al final</span></div>
+<pre class="code">// const mascotaVIP = { ...mascota, accesorio: ..., felicidad: 100 };
+// Muestra mascotaVIP.felicidad y mascota.felicidad (debe seguir distinta)
+
+
+// const { nombre, tipo } = mascota;
+// Muestra nombre y tipo
+</pre>
+    </div>
+    <div class="goal">
+      <pre>VIP felicidad: 100 | accesorio: corona 👑
+Original felicidad: 50
+Mi mascota: Pelusa (gato)</pre>
+      <p class="nota">La VIP tiene felicidad 100; la original conserva la suya. (Si jugaste antes, la original tendrá el valor acumulado, pero distinto de 100.)</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: etapa 6 - spread y destructuring"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== JEFE FINAL ===================== -->
+  <div class="part-title"><span class="pill" style="background:#5b21b6;">Jefe Final</span><h2>Un día con tu mascota</h2></div>
+
+  <section class="reto boss" id="ef">
+    <h3>🏆 Jefe Final · El menú do/while <span class="badge final">Integrador</span></h3>
+    <p class="lead">Conecta todo: un menú interactivo que cuida a tu mascota llamando a sus métodos, hasta que decidas salir.</p>
+    <div class="mision">
+      <p>Arma un menú con <code class="inline">do/while</code> que, según la opción del usuario, llame a un método de tu mascota. Se repite hasta elegir <strong>Salir</strong>. Opciones:</p>
+      <ol>
+        <li><strong>Alimentar</strong> (llama <code class="inline">mascota.alimentar()</code>).</li>
+        <li><strong>Jugar</strong> (<code class="inline">mascota.jugar()</code>).</li>
+        <li><strong>Dormir</strong> (<code class="inline">mascota.dormir()</code>).</li>
+        <li><strong>Ver estado</strong> (<code class="inline">mascota.verEstado()</code>).</li>
+        <li><strong>Salir</strong>.</li>
+      </ol>
+      <p><strong>Requisito:</strong> el menú NO repite lógica; solo <strong>invoca</strong> los métodos que ya creaste. Para leer la opción usa <code class="inline">prompt()</code> (o la función <code class="inline">pedir()</code> simulada que viste en clase, para probar sin ventanitas).</p>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Estructura: <code class="inline">let opcion; do { ...menú; opcion = prompt("Opción:"); if/else if... } while (opcion !== "5");</code>.</li>
+        <li>Usa <code class="inline">do/while</code> para que el menú aparezca al menos una vez.</li>
+        <li>Cada opción del <code class="inline">if/else if</code> llama a UN método: <code class="inline">if (opcion === "1") mascota.alimentar();</code>.</li>
+        <li>Para probar sin ventanitas, copia el patrón <code class="inline">pedir()</code> con entradas simuladas de la clase y, en tu PC real, cámbialo por <code class="inline">prompt</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">mascota.js — cierre del archivo</span></div>
+<pre class="code">// let opcion;
+// do {
+//   console.log("\n=== " + mascota.nombre + " ===");
+//   console.log("1) Alimentar 2) Jugar 3) Dormir 4) Ver estado 5) Salir");
+//   opcion = prompt("Opción:");   // (o pedir, para probar)
+//   if (opcion === "1") mascota.alimentar();
+//   else if (...) ...
+// } while (opcion !== "5");
+</pre>
+    </div>
+    <div class="goal">
+      <pre>=== Pelusa ===
+1) Alimentar 2) Jugar 3) Dormir 4) Ver estado 5) Salir
+Opción: 4
+  hambre: 50
+  felicidad: 50
+  energia: 50
+
+Opción: 1
+Pelusa comió 🍖
+
+Opción: 2
+Pelusa jugó 🎾
+
+Opción: 5
+¡Cuídate, Pelusa! 👋</pre>
+      <p class="nota">Ejemplo de una sesión. El diseño y los textos son tu decisión; lo importante: que cada opción use un método de tu mascota y que el ciclo termine al elegir Salir.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add mascota.js</code> → <code>git commit -m "feat: jefe final - menu do/while"</code> → <code>git push</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Venciste al Jefe Final? Márcalo</span><span class="txt-on">🏆 ¡JEFE FINAL DERROTADO!</span></label>
+  </section>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <section class="checklist">
+    <h2>📦 Antes de entregar, revisa</h2>
+    <p>Marca cada punto. Si todos están ✅, estás listo para entregar.</p>
+    <label><input type="checkbox"> Mi <code class="inline">mascota.js</code> tiene el objeto con <strong>propiedades + métodos</strong> y el <strong>menú do/while</strong>, y funciona completo.</label>
+    <label><input type="checkbox"> Mis métodos usan <strong>this</strong> para leer y cambiar las propiedades (no valores fijos).</label>
+    <label><input type="checkbox"> Usé <strong>notación punto y corchete</strong>, <strong>Object.entries</strong>, <strong>spread</strong> y <strong>destructuring</strong>.</label>
+    <label><input type="checkbox"> Los stats nunca pasan de 100 ni bajan de 0 (usé <strong>Math.max / Math.min</strong>).</label>
+    <label><input type="checkbox"> Tengo <strong>un commit por etapa</strong> (revisa con <code class="inline">git log --oneline</code>).</label>
+    <label><input type="checkbox"> Subí a <strong>GitHub</strong> y publiqué en <strong>GitHub Pages</strong> (abre sin errores en F12).</label>
+    <label><input type="checkbox"> Voy a entregar <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</label>
+  </section>
+
+  <p style="text-align:center; margin-top:48px;"><a class="back-top" href="#">↑ Volver al inicio</a></p>
+
+  <footer>
+    🐾 Actividad integradora — Módulo 4 · Lección 05 · Mi Mascota Virtual<br>
+    Construye por etapas, versiona con Git, sube a GitHub y publica en Pages.<br>
+    Aplica TODO lo de objetos: propiedades, métodos con this, Object.entries, spread y destructuring.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    "use strict";
+    var checks = document.querySelectorAll('section.reto .done input[type="checkbox"]');
+    var contador = document.getElementById('contador');
+    function actualizar() {
+      var hechas = 0;
+      checks.forEach(function (c) { if (c.checked) hechas++; });
+      if (contador) contador.textContent = hechas;
+    }
+    checks.forEach(function (c) { c.addEventListener('change', actualizar); });
+    actualizar();
+  })();
+</script>
+</body>
+</html>
