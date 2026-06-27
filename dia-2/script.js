@@ -116,7 +116,7 @@ const pizzeriaApp={
     },
     marcarEntregado(nro){
         if(!this.existePedido(nro)) return "❌ No existe ese pedido";
-        const {cliente} = this.pedidos[nro-1];
+        const pedido = this.pedidos[nro-1];
         pedido.entregado= true;
 
         return `🛵 Pedido de ${pedido.cliente} entregado`
