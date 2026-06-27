@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Actividad integradora final del Módulo 4 — Gremio de Aventureros (RPG). El alumno construye por etapas un objeto gremio con un roster de héroes (objetos), funciones arrow, métodos con this, misiones con Math.random, for, destructuring, Object.entries, ranking con sort, reduce/filter, y un menú do/while. Aplica TODO el módulo. Versiona con Git, sube a GitHub y publica en GitHub Pages. SIN soluciones." />
+<title>🏰 Actividad · Módulo 4 · Gremio de Aventureros</title>
+<style>
+  :root {
+    --bg:#f4f4f8; --paper:#ffffff; --ink:#1a1530; --ink-soft:#5b5575;
+    --brand:#7c3aed; --brand-2:#b45309; --accent:#0ea5a4; --warn:#b45309;
+    --warn-bg:#fff7ed; --ok:#15803d; --ok-bg:#f0fdf4;
+    --code-bg:#1a1530; --code-ink:#e9e4f5; --code-blue:#7dd3fc; --border:#e2dcef; --radius:14px;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.7; font-size:18px; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 96px; }
+
+  header.hero { background:linear-gradient(135deg,#4c1d95,#b45309); color:#fff; border-radius:20px; padding:44px 40px; margin-bottom:16px; }
+  header.hero .kicker { text-transform:uppercase; letter-spacing:.2em; font-size:.8rem; opacity:.9; margin:0 0 12px; }
+  header.hero h1 { margin:0 0 12px; font-size:clamp(1.8rem,4.5vw,2.8rem); line-height:1.1; }
+  header.hero p { margin:0; font-size:1.1rem; opacity:.95; max-width:780px; }
+
+  .rules { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:26px 30px; margin-bottom:16px; }
+  .rules h2 { margin:0 0 12px; font-size:1.2rem; }
+  .rules ol { margin:0; padding-left:22px; } .rules li { margin:8px 0; }
+  .rules .progress { margin-top:18px; padding-top:16px; border-top:1px dashed var(--border); font-weight:600; color:var(--brand); font-size:1.05rem; }
+
+  table.cobertura { width:100%; border-collapse:collapse; margin:14px 0 0; font-size:.88rem; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  table.cobertura th, table.cobertura td { padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  table.cobertura th { background:#f0edf9; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; }
+  table.cobertura td:first-child { font-weight:700; color:var(--brand); white-space:nowrap; }
+  table.cobertura tr:last-child td { border-bottom:none; }
+
+  .setup { background:linear-gradient(180deg,#ffffff,#f5f3ff); border:1px solid #ddd6fe; border-left:6px solid var(--brand); border-radius:var(--radius); padding:28px 32px; margin-bottom:16px; }
+  .setup h2 { margin:0 0 10px; font-size:1.45rem; }
+  .setup > p { margin:10px 0; }
+  .setup h3 { margin:28px 0 8px; font-size:1.1rem; color:var(--brand); display:flex; align-items:center; gap:10px; }
+  .setup h3 .step { background:var(--brand); color:#fff; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+  .setup ol, .setup ul { padding-left:24px; margin:8px 0; } .setup li { margin:7px 0; }
+  .setup pre { background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:16px 18px; margin:10px 0; overflow-x:auto; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.88rem; line-height:1.6; white-space:pre; }
+  .setup pre.tree { color:var(--code-blue); }
+  .setup .opt { background:#faf9fe; border:1px solid var(--border); border-radius:10px; padding:4px 18px 14px; margin:12px 0; }
+  .setup .opt h4 { margin:14px 0 6px; font-size:.98rem; }
+  .note-box { background:var(--warn-bg); border-left:5px solid var(--warn); border-radius:10px; padding:12px 18px; margin:14px 0; font-size:.92rem; }
+  .note-box::before { content:"⚠️ "; font-weight:700; }
+  .git-box { background:#ecfeff; border-left:5px solid var(--accent); border-radius:10px; padding:12px 18px; margin:14px 0; font-size:.92rem; }
+  .git-box::before { content:"🔧 Git — "; font-weight:700; color:var(--accent); }
+
+  section.reto { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:30px 32px; margin-top:26px; box-shadow:0 1px 3px rgba(26,21,48,.05); transition:border-color .2s ease, box-shadow .2s ease; }
+  section.reto:has(.done input:checked) { border-color:var(--ok); box-shadow:0 0 0 2px rgba(21,128,61,.18); }
+  section.reto h3 { margin:0 0 6px; font-size:1.35rem; }
+  section.reto .lead { color:var(--ink-soft); margin:0 0 14px; }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; margin:0 0 14px; }
+  .chips .chip { background:#f0edf9; color:#5b21b6; border:1px solid #ddd6fe; font-size:.74rem; padding:3px 10px; border-radius:999px; font-weight:600; }
+
+  .badge { display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; margin-left:10px; vertical-align:middle; }
+  .badge.b1{ background:#dcfce7; color:#166534; } .badge.b2{ background:#fef9c3; color:#854d0e; } .badge.b3{ background:#fee2e2; color:#991b1b; } .badge.final{ background:#ede9fe; color:#5b21b6; }
+
+  .mision { background:#f5f3ff; border-left:5px solid var(--brand); border-radius:10px; padding:14px 22px 16px; margin:16px 0; }
+  .mision::before { content:"🎯 Tu misión"; display:block; font-weight:700; color:var(--brand); margin-bottom:6px; }
+  .mision ol { margin:6px 0 0; padding-left:22px; } .mision li { margin:6px 0; } .mision p { margin:6px 0; }
+
+  details.hint { background:var(--warn-bg); border:1px solid #fed7aa; border-radius:10px; padding:0 18px; margin:16px 0; }
+  details.hint summary { cursor:pointer; font-weight:700; color:var(--warn); padding:13px 0; list-style:none; }
+  details.hint summary::-webkit-details-marker { display:none; }
+  details.hint summary::before { content:"💡 "; }
+  details.hint[open] summary { border-bottom:1px dashed #fed7aa; }
+  details.hint ul { margin:12px 0 16px; padding-left:22px; } details.hint li { margin:7px 0; }
+
+  code.inline { background:#f0edf9; color:#9d174d; padding:2px 7px; border-radius:6px; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.9em; }
+
+  .lab-head { display:flex; align-items:center; gap:10px; background:#f0edf9; border-bottom:1px solid var(--border); padding:9px 16px; }
+  .lab-head .fname { color:var(--ink-soft); font-size:.82rem; font-weight:600; font-family:"SF Mono",Menlo,monospace; }
+  .lab-head .fname::before { content:"📄 "; }
+  .starter { margin:18px 0; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .starter pre.code { margin:0; background:var(--code-bg); color:var(--code-ink); padding:18px 20px; overflow-x:auto; font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:.95rem; line-height:1.6; tab-size:2; white-space:pre; }
+
+  .goal { background:#f5f3ff; border-left:5px solid var(--brand); border-radius:10px; padding:14px 22px; margin:16px 0; }
+  .goal::before { content:"✅ Deberías ver algo así"; display:block; font-weight:700; color:var(--brand); margin-bottom:6px; }
+  .goal pre { margin:6px 0 0; background:#ffffff; border:1px solid #ddd6fe; border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:"SF Mono",Menlo,monospace; font-size:.9rem; color:#4c1d95; line-height:1.5; white-space:pre; }
+  .goal .nota { font-size:.82rem; color:var(--ink-soft); margin:10px 0 0; }
+
+  label.done { display:inline-flex; align-items:center; gap:9px; margin-top:16px; font-weight:600; color:var(--ink-soft); cursor:pointer; user-select:none; }
+  label.done input { width:18px; height:18px; accent-color:var(--ok); cursor:pointer; }
+  section.reto:has(.done input:checked) label.done { color:var(--ok); }
+  label.done .txt-on { display:none; }
+  section.reto:has(.done input:checked) label.done .txt-off { display:none; }
+  section.reto:has(.done input:checked) label.done .txt-on { display:inline; }
+
+  .commit-tip { margin:14px 0 0; font-size:.86rem; color:var(--ink-soft); background:#f0fdfa; border:1px dashed #99f6e4; border-radius:8px; padding:10px 14px; }
+  .commit-tip code { background:#ccfbf1; color:#0f766e; padding:2px 7px; border-radius:6px; font-family:"SF Mono",Menlo,monospace; font-size:.88em; }
+
+  .part-title { display:flex; align-items:center; gap:14px; margin:56px 0 8px; padding-bottom:14px; border-bottom:3px solid var(--brand); flex-wrap:wrap; }
+  .part-title .pill { background:var(--brand); color:#fff; font-size:.8rem; letter-spacing:.15em; text-transform:uppercase; padding:6px 14px; border-radius:999px; }
+  .part-title h2 { margin:0; font-size:1.6rem; }
+
+  section.reto.boss { border:2px solid var(--brand); background:linear-gradient(180deg,#ffffff,#f5f3ff); }
+  section.reto.boss h3 { color:var(--brand); }
+
+  .checklist { background:var(--ok-bg); border:1px solid #bbf7d0; border-left:6px solid var(--ok); border-radius:var(--radius); padding:26px 30px; margin-top:34px; }
+  .checklist h2 { margin:0 0 6px; font-size:1.35rem; }
+  .checklist > p { margin:0 0 14px; color:var(--ink-soft); font-size:.95rem; }
+  .checklist label { display:flex; align-items:flex-start; gap:11px; margin:10px 0; cursor:pointer; }
+  .checklist input { width:18px; height:18px; margin-top:4px; accent-color:var(--ok); cursor:pointer; flex-shrink:0; }
+
+  footer { text-align:center; color:var(--ink-soft); font-size:.9rem; margin-top:64px; }
+  a.back-top { color:var(--brand); text-decoration:none; font-size:.85rem; }
+
+  @media (max-width:640px){ body{font-size:16px;} .wrap{padding:20px 14px 64px;} section.reto{padding:22px 18px;} }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">Módulo 4 · Proyecto integrador final · Actividad</p>
+    <h1>🏰 Gremio de Aventureros</h1>
+    <p>Construye el manager de un gremio de héroes y aplica <strong>TODO lo que aprendiste en el módulo</strong>: tipos y variables, condicionales, arreglos y ciclos (<code style="color:#fff">for</code>, <code style="color:#fff">do/while</code>), funciones y arrow, objetos con <code style="color:#fff">this</code>, <code style="color:#fff">map/filter/reduce/sort</code>, <code style="color:#fff">Math</code>, destructuring y <code style="color:#fff">Object.entries</code>. Lo armas <strong>por etapas</strong> en <code style="color:#fff">gremio.js</code>, lo versionas con <strong>Git</strong>, lo subes a <strong>GitHub</strong> y lo publicas en <strong>GitHub Pages</strong>.</p>
+  </header>
+
+  <section class="rules">
+    <h2>📜 Cómo se juega</h2>
+    <ol>
+      <li>Primero <strong>arma tu proyecto</strong> (sección de abajo): carpeta, <code class="inline">gremio.js</code>, <code class="inline">index.html</code> y repositorio Git.</li>
+      <li>Resuelve las etapas <strong>en orden</strong>: cada una agrega algo a tu sistema.</li>
+      <li>La misión dice QUÉ lograr, no CÓMO. Si te atascas, abre la <strong>💡 pista</strong>.</li>
+      <li>Prueba en tu computador (Node o Live Server + consola F12) y compara con la <strong>salida esperada</strong>.</li>
+      <li>Cuando una etapa funcione: <strong>haz un commit</strong>. Una etapa = un commit.</li>
+      <li>Marca <strong>"Etapa cumplida"</strong> y mira subir tu progreso.</li>
+    </ol>
+    <p class="progress">🏅 Progreso: <span id="contador">0</span> / 9 etapas cumplidas</p>
+
+    <p style="margin:18px 0 6px; font-weight:600;">🎓 Lo que vas a aplicar (todo el módulo):</p>
+    <table class="cobertura">
+      <tr><th>Etapa</th><th>Materia del módulo que aplicas</th></tr>
+      <tr><td>1</td><td>Objetos, arreglo de objetos, notación punto/corchete, tipos</td></tr>
+      <tr><td>2</td><td>Funciones arrow, valor por defecto, find, ternario, Math, String</td></tr>
+      <tr><td>3</td><td>Método con this, ciclo <code class="inline">for</code>, destructuring</td></tr>
+      <tr><td>4</td><td>Método, push, parámetro con valor por defecto</td></tr>
+      <tr><td>5</td><td>Math.random / Math.max, condicionales, guard clauses, cambiar estado</td></tr>
+      <tr><td>6</td><td>sort + copia con spread</td></tr>
+      <tr><td>7</td><td>reduce + filter + map</td></tr>
+      <tr><td>8</td><td>Object.entries (recorrer un objeto)</td></tr>
+      <tr><td>Jefe Final</td><td>do/while, prompt, if / else if</td></tr>
+    </table>
+  </section>
+
+  <div class="setup">
+    <h2>🚀 Arma y entrega tu proyecto</h2>
+    <p>Crea tu proyecto, versiónalo con Git, súbelo a <strong>GitHub</strong> y publícalo en <strong>GitHub Pages</strong>.</p>
+
+    <h3><span class="step">1</span> Crea tu carpeta</h3>
+<pre class="tree">gremio-aventureros/
+├── index.html     ← carga tu gremio.js
+├── README.md      ← describe tu proyecto
+└── gremio.js      ← AQUÍ construyes todo, etapa por etapa</pre>
+
+    <h3><span class="step">2</span> Copia este index.html base</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es-CL"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Gremio de Aventureros&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Gremio de Aventureros — abre la consola (F12)&lt;/h1&gt;
+  &lt;script src="gremio.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <div class="note-box">Para probar: abre <code class="inline">index.html</code> con <strong>Live Server</strong> y mira la consola (F12). Si tienes <strong>Node</strong>, corre <code class="inline">node gremio.js</code> en la terminal.</div>
+
+    <h3><span class="step">3</span> Inicializa Git y commitea por etapa</h3>
+<pre>git init
+git add .
+git commit -m "chore: estructura inicial del proyecto"</pre>
+    <div class="git-box">cada etapa que funcione = un commit con mensaje claro (<code class="inline">feat: ...</code>). NO dejes todo para un commit gigante al final. Revisa con <code class="inline">git log --oneline</code>.</div>
+
+    <h3><span class="step">4</span> Sube a GitHub y publica en Pages</h3>
+    <div class="opt">
+      <h4>Subir (terminal, recomendado)</h4>
+<pre>git branch -M main
+git remote add origin https://github.com/TU-USUARIO/gremio-aventureros.git
+git push -u origin main</pre>
+      <h4>Publicar</h4>
+      <p>En tu repo: <strong>Settings → Pages</strong>, elige rama <code class="inline">main</code> y carpeta <code class="inline">/ (root)</code>. Abre el enlace y revisa la consola (F12).</p>
+    </div>
+    <div class="note-box">Entregas <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</div>
+  </div>
+
+  <!-- ===================== PARTE 1 ===================== -->
+  <div class="part-title"><span class="pill">Parte 1 · El gremio</span><h2>Datos, funciones y roster</h2></div>
+
+  <!-- E1 -->
+  <section class="reto" id="e1">
+    <h3>Etapa 1 · El gremio nace <span class="badge b1">Nivel 1</span></h3>
+    <p class="lead">Todo empieza por los datos. El gremio es un OBJETO; su roster es un arreglo de héroes (también objetos).</p>
+    <div class="chips"><span class="chip">objeto</span><span class="chip">arreglo de objetos</span><span class="chip">punto / corchete</span></div>
+    <div class="mision">
+      <ol>
+        <li>Copia el objeto <code class="inline">gremio</code> al inicio de tu <code class="inline">gremio.js</code>. Tiene un nombre y un arreglo <code class="inline">heroes</code>, donde cada héroe es un objeto con nombre, clase, nivel, oro y vida.</li>
+        <li>Muestra el <strong>nombre del gremio</strong> (notación punto) y el <strong>nombre del primer héroe</strong> (arreglo + propiedad).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>A una propiedad de un objeto llegas con el <strong>punto</strong>.</li>
+        <li>El primer elemento de un arreglo está en la posición <strong>0</strong>; desde ahí, accedes a su propiedad.</li>
+        <li>Para armar texto con datos adentro, usa <strong>backticks</strong> y <code class="inline">${...}</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — punto de partida</span></div>
+<pre class="code">const gremio = {
+  nombre: "Los Valientes",
+  heroes: [
+    { nombre: "Aragorn", clase: "Guerrero", nivel: 5, oro: 120, vida: 100 },
+    { nombre: "Gandalf", clase: "Mago",     nivel: 8, oro: 200, vida: 80 },
+    { nombre: "Legolas", clase: "Arquero",  nivel: 3, oro: 90,  vida: 0 },
+  ],
+
+  // En las próximas etapas agregarás métodos AQUÍ dentro.
+};
+
+// Muestra el nombre del gremio y el del primer héroe
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Gremio: Los Valientes
+Primer héroe: Aragorn</pre>
+      <p class="nota">Legolas tiene vida 0 a propósito (está caído): te servirá más adelante para filtrar.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 1 - datos del gremio"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E2 -->
+  <section class="reto" id="e2">
+    <h3>Etapa 2 · Funciones arrow utilitarias <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Antes de los métodos, tres herramientas arrow que el sistema reutilizará. Una de ellas con valor por defecto.</p>
+    <div class="chips"><span class="chip">arrow functions</span><span class="chip">find</span><span class="chip">ternario</span><span class="chip">valor por defecto</span><span class="chip">Math</span></div>
+    <div class="mision">
+      <ol>
+        <li><code class="inline">buscarHeroe(nombre)</code>: devuelve el héroe del roster cuyo nombre coincida (sin importar mayúsculas). Usa <code class="inline">find</code>.</li>
+        <li><code class="inline">estadoVida(vida)</code>: arrow con un <strong>ternario</strong> que devuelve <code class="inline">"💀 caído"</code> si la vida es 0, o el texto de la vida si está vivo.</li>
+        <li><code class="inline">tirarDado(max)</code>: devuelve un número al azar entre 10 y <code class="inline">max + 9</code>. El <code class="inline">max</code> debe tener <strong>valor por defecto 50</strong>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">find</code> recorre un arreglo y devuelve el PRIMER elemento que cumple una condición. Para comparar nombres sin importar mayúsculas, pasa ambos textos a minúsculas antes de comparar (método <code class="inline">toLowerCase</code>).</li>
+        <li><code class="inline">estadoVida</code> es de una sola línea: ideal para un <strong>ternario</strong> (<code class="inline">condición ? valorA : valorB</code>).</li>
+        <li>Para un número al azar: <code class="inline">Math.random()</code> da entre 0 y 1, y <code class="inline">Math.floor</code> lo baja a entero. El valor por defecto se escribe en el propio parámetro.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega debajo del objeto</span></div>
+<pre class="code">// Crea 3 funciones arrow (van FUERA del objeto):
+//
+//   buscarHeroe(nombre) -> el héroe cuyo nombre coincida (sin importar mayúsculas)
+//   estadoVida(vida)    -> "💀 caído" si la vida es 0, o el texto de la vida si está vivo
+//   tirarDado(max)      -> un número al azar entre 10 y max+9 (max por defecto: 50)
+//
+// Después pruébalas con console.log.
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Encontrado: Gandalf
+Estado con 0 vida: 💀 caído
+Estado con 100 vida: 100 vida
+Dado: (un número entre 10 y 59, varía)</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 2 - funciones arrow utilitarias"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E3 -->
+  <section class="reto" id="e3">
+    <h3>Etapa 3 · Ver el roster (this + for + destructuring) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">El primer método. Recorre los héroes con un <code class="inline">for</code> clásico y saca sus datos con destructuring.</p>
+    <div class="chips"><span class="chip">método</span><span class="chip">this</span><span class="chip">for clásico</span><span class="chip">destructuring</span></div>
+    <div class="mision">
+      <ol>
+        <li>Agrega el método <code class="inline">verRoster()</code> que recorra <code class="inline">this.heroes</code> con un ciclo <code class="inline">for</code> e imprima la ficha de cada héroe.</li>
+        <li>Dentro del <code class="inline">for</code>, usa <strong>destructuring</strong> para sacar <code class="inline">nombre, clase, nivel, oro, vida</code> del héroe.</li>
+        <li>Para el estado, reutiliza tu función <code class="inline">estadoVida(vida)</code> de la etapa 2.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Es un <strong>método</strong>: defínelo con <code class="inline">function</code> (no arrow), para que <code class="inline">this</code> sea el gremio.</li>
+        <li>El <code class="inline">for</code> clásico usa un índice <code class="inline">i</code> que va de 0 hasta el largo del arreglo (<code class="inline">.length</code>).</li>
+        <li><strong>Destructuring</strong>: puedes sacar varias propiedades de un objeto a variables de un golpe, escribiendo sus nombres entre llaves.</li>
+        <li>Para el estado, reutiliza tu función <code class="inline">estadoVida</code> de la etapa 2.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Agrega el método verRoster(). Debe:
+//   - imprimir un título con el nombre del gremio (this.nombre)
+//   - recorrer this.heroes con un ciclo for
+//   - por cada héroe, sacar sus datos con destructuring y mostrar su ficha
+//     (usa tu función estadoVida para el estado)
+//
+// Luego, fuera del objeto: gremio.verRoster();
+</pre>
+    </div>
+    <div class="goal">
+      <pre>== Gremio Los Valientes ==
+  1. Aragorn (Guerrero) - Nivel 5, 120 oro, 100 vida
+  2. Gandalf (Mago) - Nivel 8, 200 oro, 80 vida
+  3. Legolas (Arquero) - Nivel 3, 90 oro, 💀 caído</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 3 - verRoster con for y destructuring"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E4 -->
+  <section class="reto" id="e4">
+    <h3>Etapa 4 · Reclutar (valor por defecto) <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Un método para sumar aventureros. Si no se indica la clase, entra como "Aventurero".</p>
+    <div class="chips"><span class="chip">método</span><span class="chip">push</span><span class="chip">valor por defecto</span></div>
+    <div class="mision">
+      <ol>
+        <li>Agrega <code class="inline">reclutar(nombre, clase)</code> que cree un héroe nuevo (nivel 1, 0 oro, 100 vida) y lo agregue con <code class="inline">push</code>.</li>
+        <li>El parámetro <code class="inline">clase</code> debe tener <strong>valor por defecto "Aventurero"</strong>.</li>
+        <li>Prueba reclutando a <em>"Gimli"</em> el <em>"Guerrero"</em>, y a <em>"Sam"</em> <strong>sin pasar clase</strong> (debe quedar como Aventurero).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para agregar un elemento al final de un arreglo, ¿qué método conoces? (empieza con <code class="inline">p</code>...)</li>
+        <li>El nuevo héroe es un objeto: define sus propiedades fijas (nivel 1, oro 0, vida 100).</li>
+        <li>El <strong>valor por defecto</strong> se escribe en el propio parámetro de la función.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Agrega el método reclutar(nombre, clase). Debe:
+//   - crear un héroe nuevo (nivel 1, 0 oro, 100 vida)
+//   - agregarlo al roster
+//   - la clase debe tener valor por defecto "Aventurero"
+//
+// Prueba: gremio.reclutar("Gimli", "Guerrero");  y  gremio.reclutar("Sam");
+</pre>
+    </div>
+    <div class="goal">
+      <pre>🛡️ Gimli el Guerrero se unió al gremio
+🛡️ Sam el Aventurero se unió al gremio</pre>
+      <p class="nota">Sam no pasó clase, así que entró el valor por defecto: "Aventurero".</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 4 - reclutar con valor por defecto"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== PARTE 2 ===================== -->
+  <div class="part-title"><span class="pill">Parte 2 · A la aventura</span><h2>Misiones con suerte</h2></div>
+
+  <!-- E5 -->
+  <section class="reto" id="e5">
+    <h3>Etapa 5 · Enviar a una misión (Math) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">La etapa estrella: la SUERTE decide. Aquí brillan <code class="inline">Math.random</code> y <code class="inline">Math.max</code>, y reutilizas tus funciones de la etapa 2.</p>
+    <div class="chips"><span class="chip">Math.random</span><span class="chip">Math.max</span><span class="chip">condicionales</span><span class="chip">guard clauses</span><span class="chip">cambiar estado</span></div>
+    <div class="mision">
+      <ol>
+        <li>Agrega <code class="inline">enviarMision(nombreHeroe)</code>: busca el héroe con tu <code class="inline">buscarHeroe</code>. Si no existe o está caído (vida 0), avisa y termina (guard clauses).</li>
+        <li>Tira la suerte con <code class="inline">Math.random() &lt; 0.6</code> (60% de éxito). Si gana: suma oro con <code class="inline">tirarDado(50)</code> y sube un nivel. Si pierde: réstale vida con <code class="inline">tirarDado(30)</code>.</li>
+        <li>Al restar vida, usa <code class="inline">Math.max(0, ...)</code> para que NUNCA quede negativa.</li>
+        <li>Envía a alguien a la misión un par de veces y observa los cambios.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para "salir temprano" cuando algo no es válido (no existe, está caído), usa un <code class="inline">return</code> dentro de un <code class="inline">if</code> (guard clause).</li>
+        <li><code class="inline">Math.random()</code> da un número entre 0 y 1. ¿Cómo lo comparas para que el éxito ocurra el 60% de las veces?</li>
+        <li>Para sumar/restar a una propiedad: <code class="inline">heroe.oro += ...</code> o <code class="inline">heroe.vida -= ...</code>.</li>
+        <li>Para que un valor no baje de un piso (0), existe <code class="inline">Math.max</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Agrega el método enviarMision(nombreHeroe). Debe:
+//   1) buscar el héroe (reutiliza buscarHeroe). Si no existe o está caído, avisar y terminar
+//   2) decidir con la suerte si hay éxito (60% de probabilidad)
+//   3) si gana: sumar oro (tirarDado) y subir un nivel
+//      si pierde: restarle vida (tirarDado), evitando que quede negativa
+//
+// Prueba: gremio.enviarMision("Aragorn");  (varias veces, el azar cambia)
+</pre>
+    </div>
+    <div class="goal">
+      <pre>⚔️ Aragorn triunfó! +42 oro, ahora nivel 6
+(o, con mala suerte:)
+🩸 Aragorn fue herido (queda 82 vida)</pre>
+      <p class="nota">El resultado es ALEATORIO: cambia en cada ejecución. Si envías a Legolas (caído), debe avisar que no puede ir.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 5 - misiones con Math"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== PARTE 3 ===================== -->
+  <div class="part-title"><span class="pill">Parte 3 · Gestión</span><h2>Ranking, cuentas y fichas</h2></div>
+
+  <!-- E6 -->
+  <section class="reto" id="e6">
+    <h3>Etapa 6 · El ranking (sort) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">¿Quién es el más poderoso? Ordena el roster por nivel, de mayor a menor.</p>
+    <div class="chips"><span class="chip">sort</span><span class="chip">spread (copia)</span></div>
+    <div class="mision">
+      <ol>
+        <li>Agrega <code class="inline">ranking()</code> que muestre los héroes ordenados por <strong>nivel</strong>, de mayor a menor.</li>
+        <li>Ordena con <code class="inline">sort</code> sobre una <strong>copia</strong> del arreglo (con spread), para no desordenar el roster original.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>El método <code class="inline">sort</code> ordena un arreglo. Recibe una función que compara dos elementos (<code class="inline">a</code>, <code class="inline">b</code>).</li>
+        <li>Para copiar un arreglo ANTES de ordenarlo (y no desordenar el original), recuerda el operador <strong>spread</strong> <code class="inline">[...]</code>.</li>
+        <li>¿<code class="inline">a.nivel - b.nivel</code> o <code class="inline">b.nivel - a.nivel</code> para mayor a menor? Pruébalo y observa.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Agrega el método ranking(). Debe:
+//   - mostrar los héroes ordenados por nivel, de MAYOR a menor
+//   - ordenar sobre una COPIA del arreglo (no sobre el roster real)
+//
+// Fuera: gremio.ranking();
+</pre>
+    </div>
+    <div class="goal">
+      <pre>== Ranking por nivel ==
+  1. Gandalf - Nivel 8
+  2. Aragorn - Nivel 5
+  3. Legolas - Nivel 3
+  4. Gimli - Nivel 1
+  5. Sam - Nivel 1</pre>
+      <p class="nota">Asume el roster inicial + Gimli y Sam reclutados. Si ya enviaste héroes a misiones, los niveles habrán cambiado.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 6 - ranking con sort"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E7 -->
+  <section class="reto" id="e7">
+    <h3>Etapa 7 · Tesoro y bajas (reduce + filter) <span class="badge b3">Nivel 3</span></h3>
+    <p class="lead">Las cuentas del gremio: cuánto oro juntaron entre todos, y quiénes siguen en pie.</p>
+    <div class="chips"><span class="chip">reduce</span><span class="chip">filter</span><span class="chip">map</span></div>
+    <div class="mision">
+      <ol>
+        <li>Agrega <code class="inline">tesoro()</code> que devuelva la <strong>suma del oro</strong> de todos los héroes (con <code class="inline">reduce</code>).</li>
+        <li>Agrega <code class="inline">vivos()</code> que devuelva los héroes con <strong>vida mayor a 0</strong> (con <code class="inline">filter</code>).</li>
+        <li>Muestra el tesoro total y los <strong>nombres</strong> de los héroes vivos (con <code class="inline">map</code>).</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para convertir un arreglo en UN solo valor (la suma del oro), está <code class="inline">reduce</code> (arrastra un acumulador).</li>
+        <li>Para quedarte solo con los que cumplen una condición (vida > 0), está <code class="inline">filter</code>.</li>
+        <li>Para transformar la lista de vivos en solo sus nombres, está <code class="inline">map</code>.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Agrega dos métodos:
+//   tesoro() -> devuelve la suma del oro de TODOS los héroes
+//   vivos()  -> devuelve los héroes con vida mayor a 0
+//
+// Luego muestra el tesoro y los NOMBRES de los héroes vivos.
+</pre>
+    </div>
+    <div class="goal">
+      <pre>Tesoro del gremio: 410 oro
+Héroes en pie: [ "Aragorn", "Gandalf", "Gimli", "Sam" ]</pre>
+      <p class="nota">Con el roster inicial + Gimli y Sam: oro 120+200+90+0+0 = 410. Legolas (caído) NO aparece entre los vivos.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 7 - tesoro y vivos"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- E8 -->
+  <section class="reto" id="e8">
+    <h3>Etapa 8 · Ficha del héroe (Object.entries) <span class="badge b2">Nivel 2</span></h3>
+    <p class="lead">Mostrar TODAS las propiedades de un héroe recorriendo su objeto, sin escribirlas a mano.</p>
+    <div class="chips"><span class="chip">Object.entries</span><span class="chip">recorrer objeto</span><span class="chip">find (reutilizado)</span></div>
+    <div class="mision">
+      <ol>
+        <li>Agrega <code class="inline">fichaHeroe(nombre)</code>: busca el héroe (reutiliza <code class="inline">buscarHeroe</code>), valida que exista, y muestra <strong>todas sus propiedades</strong> recorriéndolo con <code class="inline">Object.entries</code>.</li>
+        <li>Prueba con <em>"Gandalf"</em>.</li>
+      </ol>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li>Para recorrer las propiedades de un objeto, <code class="inline">Object.entries</code> lo convierte en pares <code class="inline">[clave, valor]</code>.</li>
+        <li>Sobre ese resultado (que es un arreglo) puedes usar <code class="inline">forEach</code>.</li>
+        <li>Reutiliza tu <code class="inline">buscarHeroe</code> para encontrar al héroe primero.</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — agrega DENTRO del objeto</span></div>
+<pre class="code">// Agrega el método fichaHeroe(nombre). Debe:
+//   - buscar el héroe (reutiliza buscarHeroe) y validar que exista
+//   - mostrar TODAS sus propiedades recorriéndolo (sin escribirlas a mano)
+//
+// Prueba: gremio.fichaHeroe("Gandalf");
+</pre>
+    </div>
+    <div class="goal">
+      <pre>== Ficha de Gandalf ==
+  nombre: Gandalf
+  clase: Mago
+  nivel: 8
+  oro: 200
+  vida: 80</pre>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: etapa 8 - ficha con Object.entries"</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Lo lograste? Márcalo aquí</span><span class="txt-on">✅ ¡Etapa cumplida!</span></label>
+  </section>
+
+  <!-- ===================== JEFE FINAL ===================== -->
+  <div class="part-title"><span class="pill" style="background:#4c1d95;">Jefe Final</span><h2>La sala del gremio (menú)</h2></div>
+
+  <section class="reto boss" id="ef">
+    <h3>🏆 Jefe Final · El menú do/while <span class="badge final">Integrador</span></h3>
+    <p class="lead">Conecta todo: un menú interactivo para administrar el gremio llamando a tus métodos, hasta cerrar las puertas.</p>
+    <div class="chips"><span class="chip">do/while</span><span class="chip">prompt</span><span class="chip">if / else if</span></div>
+    <div class="mision">
+      <p>Arma un menú con <code class="inline">do/while</code> que, según la opción del usuario, llame a un método del gremio. Se repite hasta <strong>Salir</strong>. Opciones:</p>
+      <ol>
+        <li><strong>Ver roster</strong> · <strong>Reclutar</strong> (pide nombre y clase) · <strong>Enviar a misión</strong> (pide nombre)</li>
+        <li><strong>Ver ranking</strong> · <strong>Ver tesoro</strong> · <strong>Ficha de un héroe</strong> (pide nombre) · <strong>Salir</strong></li>
+      </ol>
+      <p><strong>Requisito:</strong> el menú NO repite lógica; solo <strong>invoca</strong> los métodos que ya creaste. Para leer la opción usa <code class="inline">prompt()</code> (o la función <code class="inline">pedir()</code> simulada de clase para probar sin ventanitas).</p>
+    </div>
+    <details class="hint">
+      <summary>¿Necesitas una pista?</summary>
+      <ul>
+        <li><code class="inline">do/while</code> es ideal para menús: ejecuta el cuerpo y RECIÉN al final revisa si hay que repetir. Así el menú se ve al menos una vez.</li>
+        <li>Cada opción es una rama del <code class="inline">if / else if</code> (o usa <code class="inline">switch</code>) que llama a UN método tuyo.</li>
+        <li>Para reclutar, misión o ficha, primero pide los datos con <code class="inline">prompt</code> y pásalos al método.</li>
+        <li><code class="inline">prompt</code> siempre devuelve texto, así que compara la opción como texto (<code class="inline">"1"</code>, <code class="inline">"2"</code>...).</li>
+      </ul>
+    </details>
+    <div class="starter">
+      <div class="lab-head"><span class="fname">gremio.js — cierre del archivo</span></div>
+<pre class="code">// Construye al final del archivo un menú con do/while. Debe:
+//   - mostrar las opciones (Roster, Reclutar, Misión, Ranking, Tesoro, Ficha, Salir)
+//   - leer la elección con prompt
+//   - según la opción, llamar al método correspondiente del gremio
+//   - repetirse hasta que elijan Salir
+//
+// Importante: el menú solo INVOCA tus métodos, no repite su lógica.
+</pre>
+    </div>
+    <div class="goal">
+      <pre>=== GREMIO Los Valientes ===
+1) Roster 2) Reclutar 3) Misión 4) Ranking 5) Tesoro 6) Ficha 7) Salir
+Opción: 1
+  1. Aragorn (Guerrero) - Nivel 5, 120 oro, 100 vida
+  ...
+
+Opción: 3 → Héroe: Aragorn
+⚔️ Aragorn triunfó! +37 oro, ahora nivel 6
+
+Opción: 7
+¡El gremio cierra sus puertas! 🏰</pre>
+      <p class="nota">Ejemplo de sesión (las misiones varían por el azar). El diseño y los textos son tu decisión; lo clave: que cada opción use un método tuyo y que el ciclo termine al elegir Salir.</p>
+    </div>
+    <p class="commit-tip">Al terminar: <code>git add gremio.js</code> → <code>git commit -m "feat: jefe final - menu del gremio"</code> → <code>git push</code></p>
+    <label class="done"><input type="checkbox"><span class="txt-off">¿Venciste al Jefe Final? Márcalo</span><span class="txt-on">🏆 ¡JEFE FINAL DERROTADO!</span></label>
+  </section>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <section class="checklist">
+    <h2>📦 Antes de entregar, revisa</h2>
+    <p>Marca cada punto. Si todos están ✅, estás listo para entregar.</p>
+    <label><input type="checkbox"> Mi <code class="inline">gremio.js</code> tiene <strong>funciones arrow</strong>, el objeto con <strong>roster + métodos</strong> y el <strong>menú do/while</strong>, y funciona completo.</label>
+    <label><input type="checkbox"> Mis métodos usan <strong>this</strong>; recorrí con <strong>for</strong> y usé <strong>destructuring</strong>.</label>
+    <label><input type="checkbox"> Usé <strong>valor por defecto</strong>, <strong>Math.random / Math.max</strong>, y <strong>sort / reduce / filter / map</strong>.</label>
+    <label><input type="checkbox"> Usé <strong>Object.entries</strong> para recorrer un héroe, y validé casos borde (héroe inexistente o caído).</label>
+    <label><input type="checkbox"> Tengo <strong>un commit por etapa</strong> (revisa con <code class="inline">git log --oneline</code>).</label>
+    <label><input type="checkbox"> Subí a <strong>GitHub</strong> y publiqué en <strong>GitHub Pages</strong> (abre sin errores en F12).</label>
+    <label><input type="checkbox"> Voy a entregar <strong>dos enlaces</strong>: el del repositorio y el de GitHub Pages.</label>
+  </section>
+
+  <p style="text-align:center; margin-top:48px;"><a class="back-top" href="#">↑ Volver al inicio</a></p>
+
+  <footer>
+    🏰 Actividad integradora final — Módulo 4 · Gremio de Aventureros<br>
+    Construye por etapas, versiona con Git, sube a GitHub y publica en Pages.<br>
+    Aplica TODO el módulo: tipos, condicionales, arreglos, for, do/while, funciones, arrow, objetos, this, map/filter/reduce/sort, Math, destructuring y Object.entries.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    "use strict";
+    var checks = document.querySelectorAll('section.reto .done input[type="checkbox"]');
+    var contador = document.getElementById('contador');
+    function actualizar() {
+      var hechas = 0;
+      checks.forEach(function (c) { if (c.checked) hechas++; });
+      if (contador) contador.textContent = hechas;
+    }
+    checks.forEach(function (c) { c.addEventListener('change', actualizar); });
+    actualizar();
+  })();
+</script>
+</body>
+</html>
