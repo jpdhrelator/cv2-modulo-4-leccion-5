@@ -188,7 +188,7 @@ const run= ()=>{
                 const cliente= prompt("Nombre Cliente");
                 const nombrePizza= prompt("Nombre Pizza");
                 const tamanio= prompt("Tamaño Pizza");
-                const cantidad= prompt("Cantidad");
+                const cantidad= Number(prompt("Cantidad"));
                 console.log(pizzeriaApp.tomarPedido(cliente,nombrePizza,tamanio,cantidad));
             case "3":
                 alert(pizzeriaApp.verPedidos());
@@ -214,4 +214,26 @@ const run= ()=>{
     } while (opcion!="8");
 }
 
-run();
+//run();
+
+//console.log(`Bienvenidos a ${pizzeriaApp.nombre}`);
+//console.log(`Tenemos ${pizzeriaApp.menu.length} pizzas en el menú`);
+//console.log("buscando_>>",pizzeriaApp.buscarPizza("muzzarella"));
+
+//console.log(pizzeriaApp.agregarPizza("chilena",5500,["F","XG"]));
+
+//console.log(`Tenemos ${pizzeriaApp.menu.length} pizzas en el menú`);
+console.log(`${pizzeriaApp.tomarPedido("Jose","Pepperoni","XG",1)} `);
+console.log(`${pizzeriaApp.tomarPedido("Pablo","Muzzarella","F",3)} `);
+console.log(`${pizzeriaApp.tomarPedido("Rosa","Muzzarella","P",2)} `);
+console.log(`${pizzeriaApp.tomarPedido("Ester","Muzzarella","M",2)} `);
+console.log(`${pizzeriaApp.tomarPedido("Luisa","Napolitana","XG",2)} `);
+console.log(`${pizzeriaApp.tomarPedido("Luis","Napolitana","XG",5)} `);
+
+//console.log(pizzeriaApp.verPedidos());
+//console.log(pizzeriaApp.cancelarPedido(3));
+//console.log(pizzeriaApp.verPedidos());
+//console.log(pizzeriaApp.marcarEntregado(1));
+//console.log(pizzeriaApp.verPedidos());
+//console.log(pizzeriaApp.reporte());
+console.log(pizzeriaApp.pizzaMasVendida());
